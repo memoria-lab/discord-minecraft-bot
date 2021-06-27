@@ -1,0 +1,61 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Discord Minecraft Bot
+
+Globals:
+  Function:
+    Timeout: 5
+
+Parameters:
+  DiscordToken:
+    Description: Discord Token
+    NoEcho: true
+    Type: String
+  ApplicationID:
+    Description: Discord Application ID (Client ID)
+    Type: String
+  ApplicationPublicKey:
+    Description: Discord Application Public Key
+    Type: String
+  CommandGuildID:
+    Description: Discord Guild ID
+    Type: String
+  DiscordRoleID:
+    Description: Discord Role ID
+    Type: String
+  Region:
+    Description: Minecraft Instance Region
+    Type: String
+  InstanceID:
+    Description: Minecraft Instance ID
+    Type: String
+
+Resources:
+  CommandsCallbackFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: .
+      Handler: handler.commandCallback
+      Runtime: python3.8
+      Events:
+        HelloWorld:
+          Type: HttpApi
+          Properties:
+            Path: /commandCallback
+            Method: POST
+      Environment:
+        Variables:
+          DISCORD_TOKEN: !Ref DiscordToken
+          APPLICATION_ID: !Ref ApplicationID
+          APPLICATION_PUBLIC_KEY: !Ref ApplicationPublicKey
+          COMMAND_GUILD_ID: !Ref CommandGuildID
+          DISCORD_ROLE_ID: !Ref DiscordRoleID
+          REGION: !Ref Region
+          INSTANCE_ID: !Ref InstanceID
+      Policies:
+        - AmazonEC2FullAccess
+
+Outputs:
+  CallbackAPIEndpoint:
+    Description: 'API Gateway endpoint URL'
+    Value: !Sub 'https://${ServerlessHttpApi}.execute-api.${AWS::Region}.amazonaws.com/commandCallback'
