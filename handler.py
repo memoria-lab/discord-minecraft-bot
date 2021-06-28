@@ -26,7 +26,7 @@ COMMANDS = {
 }
 STATE = {
     'RUNNING': 'running',
-    'STOPPING': 'stopping',
+    'STOPPED': 'stopped',
 }
 
 def registerCommands():
@@ -151,7 +151,7 @@ def commandCallback(event: dict, context: dict):
 
         elif options['control'] == COMMANDS['STOP']:
             print('停止: ' + str(INSTANCE_ID))
-            if instanceState == STATE['STOPPING']:
+            if instanceState == STATE['STOPPED']:
                 print('停止済み')
                 text = "すでにマイクラめもりあ鯖は停止しています。"
             else:
@@ -161,7 +161,7 @@ def commandCallback(event: dict, context: dict):
 
         elif options['control'] == COMMANDS['REBOOT']:
             print('再起動: ' + str(INSTANCE_ID))
-            if instanceState == STATE['STOPPING']:
+            if instanceState == STATE['STOPPED']:
                 ec2.start_instances(InstanceIds=[INSTANCE_ID])
                 print('停止済み -> インスタンスの起動')
                 text = "マイクラめもりあ鯖を起動します。\nサーバー起動まで少々お待ち下さい。\nサーバーの起動が完了すると、`minecraft`チャンネルに「サーバーを起動しました。」と表示されます。"
@@ -172,7 +172,7 @@ def commandCallback(event: dict, context: dict):
 
         elif options['control'] == COMMANDS['STATUS']:
             print('ステータスの確認: ' + str(INSTANCE_ID))
-            if instanceState == STATE['STOPPING']:
+            if instanceState == STATE['STOPPED']:
                 print('停止済み')
                 text = "マイクラめもりあ鯖は停止しています。"
             else:
